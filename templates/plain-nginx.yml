@@ -1,0 +1,12 @@
+# This is a plain docker-compose file that is deliberately NOT an SGI template:
+# it has no "#SGI = true" marker. SGI-Creator must ignore it — it never appears
+# in GET /api/templates and cannot be created through the panel. It exists here
+# to prove that the folder can hold non-SGI compose files safely.
+#Name = Plain nginx (ignored)
+#Description = Should never show up in the picker
+
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"

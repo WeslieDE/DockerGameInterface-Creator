@@ -1,0 +1,29 @@
+services:
+  sgi-creator:
+    build: .
+    image: tk-weslie/sgi-creator:latest
+    container_name: sgi-creator
+    ports:
+      - "8090:80"
+    environment:
+      # REQUIRED — the panel login password. Change it.
+      SGIC_PASSWORD: "change-me"
+      # Host root for the per-server %%path%% bind mounts (<root>/<token>).
+      # The Docker daemon creates these directories on the HOST automatically.
+      SGIC_VOLUME_ROOT: "/home/GameServerVolumes"
+      # Free host-port scan window (a port is considered free via Docker).
+      SGIC_PORT_MIN: "20000"
+      SGIC_PORT_MAX: "40000"
+      # Optional: hostname shown in the "address" (defaults to the request host).
+      # SGIC_HOST: "games.example.com"
+      # Optional: SGI panel URL for the "Open in SGI" deep link in the dialog.
+      # SGIC_SGI_URL: "https://sgi.example.com/"
+    volumes:
+      # Create + start game containers on the host Docker engine.
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -fsS http://localhost/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

@@ -1,0 +1,30 @@
+#SGI = true
+#Name = Valheim — Dedicated
+#Game = Valheim
+#Version = latest
+#Description = Norse survival dedicated server (two UDP ports)
+#Icon = 🪓
+#Tags = survival, coop
+
+# Demonstrates MULTIPLE %%port%% placeholders — each one gets its own free host
+# port, allocated independently via Docker.
+services:
+  valheim:
+    image: lloesche/valheim-server
+    stdin_open: true
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:2456/udp"
+      - "%%port%%:2457/udp"
+    environment:
+      SERVER_NAME: "SGI Valheim"
+      WORLD_NAME: "Dedicated"
+      SERVER_PASS: "changeme123"
+    volumes:
+      - "%%path%%:/config"
+      - "sgi_backup:/backup"
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Valheim
+      - sgi.backup.path=/config

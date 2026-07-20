@@ -1,0 +1,20 @@
+{
+    "name": "tk-weslie/sgi-creator",
+    "description": "SGI-Creator — stateless web tool to create SGI game-server containers from templates",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.3",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-yaml": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "tk\\weslie\\SgiCreator\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
