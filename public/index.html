@@ -836,6 +836,136 @@
   .toast.err { border-left-color: var(--red); }
   @keyframes slidein { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
 
+  /* ============================ TAB NAV (SEGMENTED) ============================ */
+  .navbar { max-width: 760px; width: 100%; margin: 0 auto; padding: 18px 22px 0; }
+  .segmented {
+    display: inline-flex; gap: 2px;
+    padding: 3px;
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r);
+  }
+  .segmented a {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 18px;
+    font-size: 14px; font-weight: 570;
+    color: var(--dim);
+    border-radius: 10px;
+    cursor: pointer;
+    user-select: none;
+    transition: color .18s ease, background-color .18s ease, box-shadow .18s ease, transform .09s ease;
+  }
+  .segmented a svg { width: 16px; height: 16px; flex: none; }
+  @media (hover: hover) { .segmented a:hover { color: var(--ink); } }
+  .segmented a:active { transform: scale(.97); }
+  .segmented a.active {
+    color: var(--ink);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  :root[data-theme="dark"] .segmented a.active { background: var(--surface-3); }
+  .segmented a:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ring); }
+
+  /* ============================ CARD-HEAD TOOLS ============================ */
+  .head-tools { display: flex; align-items: center; gap: 6px; }
+  .head-tools .icon-btn { width: 34px; height: 34px; }
+  .head-tools .icon-btn svg { width: 18px; height: 18px; }
+
+  /* ============================ SERVER LIST (MANAGE) ============================ */
+  .srv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .srv-card {
+    display: flex; flex-direction: column;
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    transition: box-shadow .2s ease, border-color .2s ease;
+  }
+  /* Colour accent tells running vs stopped apart at a glance (no layout shift). */
+  .srv-card.up   { box-shadow: inset 3px 0 0 var(--green); }
+  .srv-card.down { box-shadow: inset 3px 0 0 var(--dimmer); }
+  @media (hover: hover) {
+    .srv-card.up:hover   { box-shadow: inset 3px 0 0 var(--green), var(--shadow); border-color: var(--hairline-2); }
+    .srv-card.down:hover { box-shadow: inset 3px 0 0 var(--dimmer), var(--shadow); border-color: var(--hairline-2); }
+  }
+  .srv-card .sc-head {
+    display: flex; align-items: center; gap: 11px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .srv-card .sc-thumb {
+    width: 40px; height: 40px; border-radius: 11px; flex: none;
+    display: grid; place-items: center; font-size: 20px; line-height: 1;
+    background: var(--surface-3);
+  }
+  :root[data-theme="dark"] .srv-card .sc-thumb { background: rgba(255,255,255,.08); }
+  .srv-card .sc-title { min-width: 0; flex: 1; }
+  .srv-card .sc-name {
+    font-weight: 620; font-size: 15px; letter-spacing: -0.01em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  /* Running / stopped status pill */
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px; flex: none;
+    padding: 4px 10px 4px 8px; border-radius: var(--r-pill);
+    font-size: 11.5px; font-weight: 660; letter-spacing: .01em;
+  }
+  .status-pill .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .status-pill.up   { color: var(--green); background: color-mix(in srgb, var(--green) 15%, transparent); }
+  .status-pill.up   .dot { background: var(--green); animation: pulseDot 2.2s ease-out infinite; }
+  .status-pill.down { color: var(--dim); background: var(--surface-3); }
+  :root[data-theme="dark"] .status-pill.down { background: rgba(255,255,255,.08); }
+  .status-pill.down .dot { background: var(--dimmer); }
+  @keyframes pulseDot {
+    0%       { box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 55%, transparent); }
+    70%,100% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--green) 0%, transparent); }
+  }
+
+  .srv-card .sc-body { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; flex: 1; }
+
+  /* Token — front and centre, the whole point of the list is to recover it. */
+  .srv-token {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-sm);
+    padding: 8px 8px 8px 11px;
+  }
+  .srv-token .tk-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--dim); flex: none;
+  }
+  .srv-token .tk-val {
+    font-family: var(--mono); font-size: 13px; font-weight: 560; letter-spacing: .02em;
+    flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .srv-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; }
+  .srv-row .k { color: var(--dim); font-weight: 530; flex: none; }
+  .srv-row .v {
+    font-family: var(--mono); font-size: 12.5px; color: var(--ink-2);
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .srv-card .sc-actions { display: flex; gap: 9px; padding: 0 16px 16px; }
+  .srv-card .sc-actions .btn { flex: 1; }
+
+  /* Loading / empty / list placeholders */
+  .list-state { padding: 42px 20px; text-align: center; color: var(--dim); font-size: 14px; }
+  .list-state .big { font-size: 30px; margin-bottom: 10px; }
+  .list-state .spin-lg {
+    width: 26px; height: 26px; border-radius: 50%; margin: 0 auto 12px;
+    border: 3px solid var(--hairline-2); border-top-color: var(--blue);
+    animation: spin .8s linear infinite;
+  }
+
+  /* Confirmation seal — a static red warning (no stroke-draw, unlike the OK seal) */
+  .seal.warn { color: var(--red); background: color-mix(in srgb, var(--red) 15%, transparent); }
+  .seal.warn::after { border-color: color-mix(in srgb, var(--red) 55%, transparent); }
+  .seal.warn svg path { stroke-dasharray: none; stroke-dashoffset: 0; }
+
   /* ============================ THEME TOGGLE ICON SWAP ============================ */
   .theme-toggle .i-sun { display: none; }
   :root[data-theme="dark"] .theme-toggle .i-sun  { display: block; }
@@ -908,6 +1038,19 @@
       </button>
     </div>
   </header>
+
+  <nav class="navbar">
+    <div class="segmented" id="nav" role="tablist" aria-label="Sections">
+      <a data-page="create" class="active" role="tab" tabindex="0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        New Server
+      </a>
+      <a data-page="manage" role="tab" tabindex="0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/></svg>
+        Manage
+      </a>
+    </div>
+  </nav>
 
   <main>
     <section class="page" id="page-create">
@@ -1008,6 +1151,57 @@
         </div>
       </div>
     </section>
+
+    <!-- ---------- MANAGE / DELETE SERVERS ---------- -->
+    <section class="page hidden" id="page-manage">
+      <div class="page-head">
+        <div class="avatar" style="background: color-mix(in srgb, var(--red) 15%, transparent); color: var(--red);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="m6.5 7 .8 12.1a1.9 1.9 0 0 0 1.9 1.9h5.6a1.9 1.9 0 0 0 1.9-1.9L17.5 7"/><path d="M10 11v6M14 11v6"/></svg>
+        </div>
+        <div>
+          <h2>Manage Servers</h2>
+          <div class="sub">Delete a server and everything it owns — container, volume &amp; backups</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Game Servers</h3>
+          <div class="head-tools">
+            <span class="muted mono" id="srvCount">—</span>
+            <button class="icon-btn" id="srvRefresh" type="button" title="Refresh list" aria-label="Refresh list">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 4.5V9h-4.5"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <!-- Could not reach the list -->
+          <div class="banner hidden" id="srvError" role="alert">
+            <span class="bn-ic">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.5M12 17.2v.6"/></svg>
+            </span>
+            <span class="bn-txt">
+              <span class="bn-title" id="srvErrorTitle">Servers unavailable</span>
+              <span class="bn-msg" id="srvErrorMsg">—</span>
+              <span class="bn-code mono hidden" id="srvErrorCode"></span>
+            </span>
+            <button class="btn btn-ghost" id="srvRetry" type="button">Retry</button>
+          </div>
+
+          <div class="list-state hidden" id="srvLoading"><div class="spin-lg"></div>Loading servers…</div>
+          <div class="list-state hidden" id="srvEmpty"><div class="big">🗂️</div>No SGI servers found. Create one on the “New Server” tab.</div>
+
+          <div class="srv-grid" id="serverGrid"></div>
+
+          <div class="hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.6"/></svg>
+            <span>Every container carrying an <span class="mono">sgi.token</span> label is listed here. Deleting one is permanent and also wipes its data volume and all backups.</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -1076,6 +1270,36 @@
   </div>
 </div>
 
+<!-- ============================ DELETE CONFIRM LITEBOX ============================ -->
+<div id="confirmModal" class="modal-overlay hidden" aria-hidden="true">
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-body">
+      <div class="seal warn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.5M12 17.2v.6"/></svg>
+      </div>
+      <h3 id="confirmTitle">Delete this server?</h3>
+      <p>This permanently removes the container, its data volume and all backups. This cannot be undone.</p>
+
+      <div class="summary">
+        <div class="row"><span class="k">Server</span><span class="v" id="confirmName">—</span></div>
+        <div class="row">
+          <span class="k">Token</span>
+          <span class="v-copy">
+            <span class="v tok" id="confirmToken">—</span>
+            <button class="copy-btn" id="confirmTokenCopy" type="button" data-copy-text="" title="Copy token" aria-label="Copy token">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg>
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-lg" id="confirmCancel" type="button">Cancel</button>
+      <button class="btn btn-red btn-lg" id="confirmDelete" type="button">Delete permanently</button>
+    </div>
+  </div>
+</div>
+
 <div id="toasts"></div>
 
 <!-- Theme toggle (frontend-only; independent of the API controller below) -->
@@ -1120,6 +1344,11 @@ const App = (() => {
   let selected = null;       // chosen template object
   let active = -1;           // keyboard-highlighted index in `filtered`
   let creating = false;
+
+  let servers = [];          // full list from /api/servers (manage tab)
+  let serversLoading = false;
+  let pendingDelete = null;  // server object awaiting delete confirmation
+  let deleting = false;
 
   const $ = (id) => document.getElementById(id);
 
@@ -1271,6 +1500,7 @@ const App = (() => {
     localStorage.removeItem(TOKEN_KEY);
     token = null;
     closeModal();
+    closeConfirm();
     closePop();
     clearSelection();
     $("app").classList.add("hidden");
@@ -1293,6 +1523,8 @@ const App = (() => {
     $("startBtn").addEventListener("click", createContainer);
     bindCombo();
     bindModal();
+    bindNav();
+    bindManage();
   }
 
   async function enterApp() {
@@ -1300,6 +1532,7 @@ const App = (() => {
     $("login").classList.add("hidden");
     $("app").classList.remove("hidden");
     bindStaticListeners();
+    showPage("create");   // always land on the create tab after signing in
     await loadTemplates();
   }
 
@@ -1660,6 +1893,220 @@ const App = (() => {
   async function copyValue(btn) {
     const val = $(btn.dataset.copy).textContent;
     if (!val || val === "—") return;
+    try {
+      await navigator.clipboard.writeText(val);
+    } catch {
+      toast("Copying was blocked by the browser.", true);
+      return;
+    }
+    btn.classList.add("copied");
+    setTimeout(() => btn.classList.remove("copied"), 1200);
+  }
+
+  /* =====================================================================
+     TAB NAVIGATION
+     ===================================================================== */
+  function bindNav() {
+    const nav = $("nav");
+    nav.addEventListener("click", (e) => {
+      const a = e.target.closest("a[data-page]");
+      if (a) { e.preventDefault(); showPage(a.dataset.page); }
+    });
+    // Keyboard: Enter/Space activate a focused tab.
+    nav.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const a = e.target.closest("a[data-page]");
+      if (a) { e.preventDefault(); showPage(a.dataset.page); }
+    });
+  }
+
+  function showPage(page) {
+    document.querySelectorAll("#nav a").forEach(a => a.classList.toggle("active", a.dataset.page === page));
+    document.querySelectorAll("main > .page").forEach(p => p.classList.add("hidden"));
+    const el = $("page-" + page);
+    if (el) el.classList.remove("hidden");
+    // Reaching the manage tab (re)loads the live list, so a server created on
+    // the other tab shows up immediately.
+    if (page === "manage") loadServers();
+  }
+
+  /* =====================================================================
+     MANAGE — list SGI servers
+     ===================================================================== */
+  function bindManage() {
+    $("srvRefresh").addEventListener("click", loadServers);
+    $("srvRetry").addEventListener("click", loadServers);
+
+    // Delegated on the grid: copy a token, or start a delete.
+    $("serverGrid").addEventListener("click", (e) => {
+      const copy = e.target.closest(".copy-btn");
+      if (copy) { copyText(copy); return; }
+      const del = e.target.closest(".sc-delete");
+      if (!del) return;
+      const card = del.closest(".srv-card");
+      if (card) askDelete(card.dataset.token);
+    });
+
+    // Confirm litebox.
+    $("confirmCancel").addEventListener("click", closeConfirm);
+    $("confirmDelete").addEventListener("click", doDelete);
+    $("confirmModal").addEventListener("click", (e) => {
+      const copy = e.target.closest(".copy-btn");
+      if (copy) { copyText(copy); return; }
+      if (e.target === $("confirmModal")) closeConfirm();   // backdrop dismiss
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !$("confirmModal").classList.contains("hidden") && !deleting) closeConfirm();
+    });
+  }
+
+  async function loadServers() {
+    if (serversLoading) return;
+    serversLoading = true;
+    $("srvError").classList.add("hidden");
+    $("srvEmpty").classList.add("hidden");
+    $("srvLoading").classList.remove("hidden");
+    $("serverGrid").innerHTML = "";
+    $("srvCount").textContent = "loading…";
+    try {
+      const list = await api("/servers");
+      if (!Array.isArray(list)) throw new ApiError("badResponse", { status: 200, detail: JSON.stringify(list, null, 2) });
+      servers = list;
+      renderServers();
+    } catch (ex) {
+      if (ex.kind === "unauthorized") return;   // api() already returned to login
+      servers = [];
+      $("serverGrid").innerHTML = "";
+      $("srvCount").textContent = "unavailable";
+      const d = describeError(ex, "The server list could not be loaded.");
+      $("srvErrorTitle").textContent = d.title;
+      $("srvErrorMsg").textContent   = d.message;
+      $("srvErrorCode").textContent  = d.code;
+      $("srvErrorCode").classList.toggle("hidden", !d.code);
+      $("srvError").classList.remove("hidden");
+    } finally {
+      serversLoading = false;
+      $("srvLoading").classList.add("hidden");
+    }
+  }
+
+  function renderServers() {
+    const n = servers.length;
+    $("srvCount").textContent = n + (n === 1 ? " server" : " servers");
+    $("srvEmpty").classList.toggle("hidden", n !== 0);
+    $("serverGrid").innerHTML = n ? servers.map(serverCard).join("") : "";
+  }
+
+  function serverCard(s) {
+    const up    = !!s.running;
+    const token = escapeHtml(s.token);
+    const ports = (s.ports || []).map(p => p.host).filter(Boolean);
+    const addr  = ports.length ? ports.join(", ") : "—";
+    // Prefer Docker's own human status ("Up 3 hours" / "Exited (0) …").
+    const statusText = s.status || (up ? "Running" : "Stopped");
+
+    return (
+      '<div class="srv-card ' + (up ? "up" : "down") + '" data-token="' + token + '">' +
+        '<div class="sc-head">' +
+          '<span class="sc-thumb">🎮</span>' +
+          '<span class="sc-title">' +
+            '<span class="sc-name">' + escapeHtml(s.name || s.token) + "</span>" +
+          "</span>" +
+          '<span class="status-pill ' + (up ? "up" : "down") + '">' +
+            '<span class="dot"></span>' + (up ? "Running" : "Stopped") +
+          "</span>" +
+        "</div>" +
+        '<div class="sc-body">' +
+          '<div class="srv-token">' +
+            '<span class="tk-label">Token</span>' +
+            '<span class="tk-val">' + token + "</span>" +
+            '<button class="copy-btn" type="button" data-copy-text="' + token + '" title="Copy token" aria-label="Copy token">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg>' +
+            "</button>" +
+          "</div>" +
+          '<div class="srv-row"><span class="k">State</span><span class="v">' + escapeHtml(statusText) + "</span></div>" +
+          '<div class="srv-row"><span class="k">Ports</span><span class="v">' + escapeHtml(addr) + "</span></div>" +
+        "</div>" +
+        '<div class="sc-actions">' +
+          '<button class="btn btn-red sc-delete" type="button">' +
+            '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="m6.5 7 .8 12.1a1.9 1.9 0 0 0 1.9 1.9h5.6a1.9 1.9 0 0 0 1.9-1.9L17.5 7"/></svg>' +
+            "<span>Delete</span>" +
+          "</button>" +
+        "</div>" +
+      "</div>"
+    );
+  }
+
+  /* =====================================================================
+     MANAGE — delete flow (confirm litebox)
+     ===================================================================== */
+  let confirmLastFocus = null;
+
+  function askDelete(tokenStr) {
+    const s = servers.find(x => x.token === tokenStr);
+    if (!s) return;
+    pendingDelete = s;
+
+    $("confirmName").textContent  = s.name || "—";
+    $("confirmToken").textContent = s.token;
+    $("confirmTokenCopy").dataset.copyText = s.token;
+
+    const btn = $("confirmDelete");
+    btn.disabled = false;
+    btn.innerHTML = "Delete permanently";
+    $("confirmCancel").disabled = false;
+
+    openConfirm();
+  }
+
+  async function doDelete() {
+    if (deleting || !pendingDelete) return;
+    deleting = true;
+    const s   = pendingDelete;
+    const btn = $("confirmDelete");
+    btn.disabled = true;
+    $("confirmCancel").disabled = true;
+    btn.innerHTML = '<span class="spin"></span><span>Deleting…</span>';
+
+    try {
+      await api("/servers/" + encodeURIComponent(s.token), { method: "DELETE" });
+      servers = servers.filter(x => x.token !== s.token);
+      renderServers();
+      closeConfirm();
+      toast("“" + (s.name || s.token) + "” was deleted.");
+    } catch (ex) {
+      if (ex.kind === "unauthorized") { closeConfirm(); return; }   // back to login
+      const d = describeError(ex, "The server could not be deleted.");
+      closeConfirm();
+      toast(d.message, true);
+    } finally {
+      deleting = false;
+      pendingDelete = null;
+    }
+  }
+
+  // Focus lands on Cancel, never on the destructive button (forgiveness first).
+  function openConfirm() {
+    confirmLastFocus = document.activeElement;
+    const m = $("confirmModal");
+    m.classList.remove("hidden");
+    m.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => { m.classList.add("show"); $("confirmCancel").focus(); });
+  }
+
+  function closeConfirm() {
+    const m = $("confirmModal");
+    if (m.classList.contains("hidden")) return;
+    m.classList.remove("show");
+    m.setAttribute("aria-hidden", "true");
+    setTimeout(() => m.classList.add("hidden"), 260);
+    if (confirmLastFocus && document.contains(confirmLastFocus)) confirmLastFocus.focus();
+  }
+
+  // Copy an arbitrary literal (dynamic cards use data-copy-text, not an id).
+  async function copyText(btn) {
+    const val = btn.dataset.copyText;
+    if (!val) return;
     try {
       await navigator.clipboard.writeText(val);
     } catch {

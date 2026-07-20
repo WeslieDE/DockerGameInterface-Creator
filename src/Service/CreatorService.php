@@ -322,18 +322,53 @@ final class CreatorService
     }
 
     /**
-     * Host ports currently published by running containers.
+     * Host ports that must be treated as taken — NOT just the ones live right
+     * now. A stopped container still owns its configured host port: it can be
+     * started at any moment and would then collide, so its port must never be
+     * handed to a new server. We therefore scan ALL containers (all: true):
+     *
+     *   - running containers → the live bindings from the list response
+     *     (`Ports[].PublicPort`), which also covers dynamically-assigned ports;
+     *   - stopped/created containers → the *configured* host ports from
+     *     `HostConfig.PortBindings` (via inspect), which the list omits because
+     *     nothing is actually bound while the container is down.
      *
      * @return array<int,bool> set keyed by port number
      */
     private function usedHostPorts(): array
     {
         $used = [];
-        foreach ($this->docker->listContainers([], all: false) as $c) {
-            foreach ($c['Ports'] ?? [] as $port) {
-                $public = (int) ($port['PublicPort'] ?? 0);
-                if ($public > 0) {
-                    $used[$public] = true;
+        foreach ($this->docker->listContainers([], all: true) as $c) {
+            if (($c['State'] ?? '') === 'running') {
+                foreach ($c['Ports'] ?? [] as $port) {
+                    $public = (int) ($port['PublicPort'] ?? 0);
+                    if ($public > 0) {
+                        $used[$public] = true;
+                    }
+                }
+                continue;
+            }
+
+            // Stopped/created: reserve the ports it is configured to publish.
+            $id = (string) ($c['Id'] ?? '');
+            if ($id === '') {
+                continue;
+            }
+            try {
+                $inspect = $this->docker->inspect($id);
+            } catch (DockerException) {
+                continue; // never let one unreadable container abort creation
+            }
+            $bindings = $inspect['HostConfig']['PortBindings'] ?? [];
+            if (!is_array($bindings)) {
+                continue;
+            }
+            foreach ($bindings as $binds) {
+                foreach ((array) $binds as $b) {
+                    $host = (int) ($b['HostPort'] ?? 0);
+                    if ($host > 0) {
+                        $used[$host] = true;
+                    }
                 }
             }
         }

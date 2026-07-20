@@ -14,6 +14,10 @@ services:
       # Free host-port scan window (a port is considered free via Docker).
       SGIC_PORT_MIN: "20000"
       SGIC_PORT_MAX: "40000"
+      # Named backup volume shared with SGI. When a server is deleted on the
+      # "Manage" tab, its data volume (<SGIC_VOLUME_ROOT>/<token>) AND its
+      # backups (this volume's /backup/<token> folder) are removed together.
+      SGIC_BACKUP_VOLUME: "sgi_backup"
       # Optional: hostname shown in the "address" (defaults to the request host).
       # SGIC_HOST: "games.example.com"
       # Optional: SGI panel URL for the "Open in SGI" deep link in the dialog.

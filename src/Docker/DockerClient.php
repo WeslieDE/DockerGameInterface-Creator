@@ -53,6 +53,22 @@ final class DockerClient
         return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * Inspect a single container. Needed to read the *configured* port bindings
+     * (HostConfig.PortBindings), which — unlike the container list — are present
+     * even while the container is stopped.
+     *
+     * @return array<string,mixed>
+     */
+    public function inspect(string $id): array
+    {
+        [$status, , $body] = $this->request('GET', '/containers/' . rawurlencode($id) . '/json');
+        if ($status !== 200) {
+            throw new DockerException("inspect failed (HTTP $status)" . self::errBody($body), $status);
+        }
+        return json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+    }
+
     /* ---------------------------------------------------------------- */
     /* Images                                                           */
     /* ---------------------------------------------------------------- */

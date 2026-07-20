@@ -5,15 +5,18 @@ namespace tk\weslie\SgiCreator\Http;
 
 use tk\weslie\SgiCreator\Auth\PasswordAuth;
 use tk\weslie\SgiCreator\Docker\DockerException;
+use tk\weslie\SgiCreator\Service\AdminService;
 use tk\weslie\SgiCreator\Service\CreatorService;
 use tk\weslie\SgiCreator\Template\TemplateRepository;
 
 /**
- * Front controller for the three-endpoint API the frontend (index.html) speaks:
+ * Front controller for the API the frontend (index.html) speaks:
  *
- *   POST /api/auth        password → session token         (no auth header)
- *   GET  /api/templates   the catalogue of SGI templates   (Bearer)
- *   POST /api/containers  create + start a container        (Bearer)
+ *   POST   /api/auth              password → session token       (no auth header)
+ *   GET    /api/templates         the catalogue of SGI templates (Bearer)
+ *   POST   /api/containers        create + start a container      (Bearer)
+ *   GET    /api/servers           every sgi.token container       (Bearer)
+ *   DELETE /api/servers/{token}   delete container + volume + backups (Bearer)
  *
  * Errors are returned as {"error","code"} with the status the frontend maps to
  * its own wording (the `error` text always wins).
@@ -24,6 +27,7 @@ final class Router
         private readonly PasswordAuth $auth,
         private readonly TemplateRepository $templates,
         private readonly CreatorService $creator,
+        private readonly AdminService $admin,
     ) {}
 
     public function dispatch(): void
@@ -80,6 +84,23 @@ final class Router
             $tpl    = $this->templates->require($templateId);
             $result = $this->creator->create($tpl);
             $this->json($result, 201);
+            return;
+        }
+
+        // ---- Manage: list every SGI-managed server ----
+        if ($method === 'GET' && $path === '/servers') {
+            $this->json($this->admin->listServers());
+            return;
+        }
+
+        // ---- Manage: delete a server (container + volume + backups) ----
+        if ($method === 'DELETE' && preg_match('#^/servers/([^/]+)$#', $path, $m) === 1) {
+            $token = rawurldecode($m[1]);
+            if ($token === '') {
+                throw new HttpException(400, 'No server token was given.', 'NO_TOKEN');
+            }
+            $this->admin->deleteServer($token);
+            $this->json(['status' => 'deleted', 'token' => $token]);
             return;
         }
 

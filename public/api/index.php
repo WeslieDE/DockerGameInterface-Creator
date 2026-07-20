@@ -23,6 +23,7 @@ use tk\weslie\SgiCreator\Auth\PasswordAuth;
 use tk\weslie\SgiCreator\Compose\ComposeParser;
 use tk\weslie\SgiCreator\Docker\DockerClient;
 use tk\weslie\SgiCreator\Http\Router;
+use tk\weslie\SgiCreator\Service\AdminService;
 use tk\weslie\SgiCreator\Service\CreatorService;
 use tk\weslie\SgiCreator\Template\TemplateRepository;
 
@@ -50,13 +51,16 @@ if (is_file($composer)) {
 /* ---- Configuration from the environment ---- */
 $env = static fn(string $key, string $default = ''): string => (($v = getenv($key)) !== false && $v !== '') ? $v : $default;
 
-$socket      = $env('DOCKER_SOCKET', '/var/run/docker.sock');
-$password    = $env('SGIC_PASSWORD');
-$volumeRoot  = $env('SGIC_VOLUME_ROOT', '/home/GameServerVolumes');
-$templateDir = $env('SGIC_TEMPLATE_DIR', $root . '/templates');
-$sgiUrl      = $env('SGIC_SGI_URL');
-$portMin     = (int) $env('SGIC_PORT_MIN', '20000');
-$portMax     = (int) $env('SGIC_PORT_MAX', '40000');
+$socket       = $env('DOCKER_SOCKET', '/var/run/docker.sock');
+$password     = $env('SGIC_PASSWORD');
+$volumeRoot   = $env('SGIC_VOLUME_ROOT', '/home/GameServerVolumes');
+$templateDir  = $env('SGIC_TEMPLATE_DIR', $root . '/templates');
+$sgiUrl       = $env('SGIC_SGI_URL');
+$portMin      = (int) $env('SGIC_PORT_MIN', '20000');
+$portMax      = (int) $env('SGIC_PORT_MAX', '40000');
+// Named backup volume shared with SGI (per-token sub-folder /backup/<token>).
+// A delete wipes this token's folder together with its data volume.
+$backupVolume = $env('SGIC_BACKUP_VOLUME', 'sgi_backup');
 
 // The address shown to the player. Prefer the configured host; otherwise fall
 // back to the hostname the request came in on (stripped of the panel's port).
@@ -79,5 +83,10 @@ $creator = new CreatorService(
     portMin:    $portMin > 0 ? $portMin : 20000,
     portMax:    $portMax > $portMin ? $portMax : 40000,
 );
+$admin   = new AdminService(
+    docker:       $docker,
+    volumeRoot:   $volumeRoot,
+    backupVolume: $backupVolume,
+);
 
-(new Router($auth, $repo, $creator))->dispatch();
+(new Router($auth, $repo, $creator, $admin))->dispatch();
