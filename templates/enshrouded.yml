@@ -1,0 +1,36 @@
+#SGI = true
+#Name = Enshrouded — Dedicated
+#Game = Enshrouded
+#Version = latest
+#Description = Enshrouded survival/RPG dedicated server (two UDP ports)
+#Icon = 🌫️
+#Tags = survival, rpg, coop, steam
+
+# Two %%port%% placeholders — Enshrouded needs a game port and a query port,
+# each gets its own independent free host port:
+#   1) game port   (UDP 15636) — first published port = player address.
+#   2) query port  (UDP 15637)
+services:
+  enshrouded:
+    image: mornedhels/enshrouded-server:latest
+    stdin_open: true
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:15636/udp"    # game
+      - "%%port%%:15637/udp"    # query
+    environment:
+      SERVER_NAME: "SGI Enshrouded Server"
+      SERVER_PASSWORD: "changeme123"
+      SERVER_SLOTS: "16"
+      GAME_PORT: "15636"
+      QUERY_PORT: "15637"
+      UID: "1000"
+      GID: "1000"
+    volumes:
+      - "%%path%%:/home/steam/enshrouded/savegame"   # world saves
+      - "sgi_backup:/backup"                          # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Enshrouded
+      - sgi.backup.path=/home/steam/enshrouded/savegame

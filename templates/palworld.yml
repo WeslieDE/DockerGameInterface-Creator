@@ -1,0 +1,39 @@
+#SGI = true
+#Name = Palworld — Dedicated
+#Game = Palworld
+#Version = latest
+#Description = Palworld dedicated server (game + query + RCON)
+#Icon = 🐾
+#Tags = survival, coop, creatures, steam
+
+# Three %%port%% placeholders, each gets its own free host port:
+#   1) game port   (UDP 8211) — first published port = player address.
+#   2) query port  (UDP 27015, Steam server browser)
+#   3) RCON        (TCP 25575)
+services:
+  palworld:
+    image: thijsvanloef/palworld-server-docker:latest
+    stdin_open: true
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:8211/udp"     # game
+      - "%%port%%:27015/udp"    # Steam query
+      - "%%port%%:25575"        # RCON
+    environment:
+      PLAYERS: "16"
+      SERVER_NAME: "SGI Palworld Server"
+      SERVER_DESCRIPTION: "Powered by SGI"
+      SERVER_PASSWORD: ""
+      ADMIN_PASSWORD: "changeme-admin"
+      RCON_ENABLED: "true"
+      RCON_PORT: "25575"
+      MULTITHREADING: "true"
+      COMMUNITY: "false"
+    volumes:
+      - "%%path%%:/palworld"     # saves, config, world data
+      - "sgi_backup:/backup"     # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Palworld
+      - sgi.backup.path=/palworld

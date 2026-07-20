@@ -1,0 +1,35 @@
+#SGI = true
+#Name = Rust — Dedicated
+#Game = Rust
+#Version = latest
+#Description = Facepunch Rust dedicated server (game + RCON port)
+#Icon = 🔫
+#Tags = survival, pvp, steam
+
+# Two %%port%% placeholders:
+#   1) game port  (UDP 28015) — first published port = player address.
+#   2) RCON/app   (TCP 28016) — WebRCON / server admin.
+services:
+  rust:
+    image: didstopia/rust-server:latest
+    stdin_open: true            # SGI console attaches to stdin
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:28015/udp"    # game
+      - "%%port%%:28016"        # RCON / WebRCON
+    environment:
+      RUST_SERVER_NAME: "SGI Rust Server"
+      RUST_SERVER_DESCRIPTION: "Powered by SGI"
+      RUST_SERVER_MAXPLAYERS: "50"
+      RUST_SERVER_WORLDSIZE: "3000"
+      RUST_SERVER_SEED: "12345"
+      RUST_RCON_PASSWORD: "changeme-rcon"
+      RUST_SERVER_IDENTITY: "sgi"
+    volumes:
+      - "%%path%%:/steamcmd/rust"   # world, saves, oxide/carbon data
+      - "sgi_backup:/backup"        # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Rust
+      - sgi.backup.path=/steamcmd/rust

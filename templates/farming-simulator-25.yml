@@ -1,0 +1,36 @@
+#SGI = true
+#Name = Farming Simulator 25 — Dedicated
+#Game = Landwirtschafts-Simulator
+#Version = 25
+#Description = LS25 Dedicated Server mit Web-Admin (benötigt eigenen Spiel-Key/DVD)
+#Icon = 🚜
+#Tags = ls25, fs25, farming, coop, wine
+
+# Two %%port%% placeholders:
+#   1) web admin interface  (TCP 8080) — first published port, so this is the
+#      address the player/admin sees.
+#   2) game port            (UDP 10823, FS default)
+# Hinweis: Der FS-Dedicated-Server braucht gültige Spiel-Zugangsdaten; trag deine
+# Lizenzdaten über das Image (ich777) bzw. den Web-Admin ein.
+services:
+  fs25:
+    image: ich777/farmingsimulator25server:latest
+    stdin_open: true
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:8080"          # Web-Admin (erste veröffentlichte Adresse)
+      - "%%port%%:10823/udp"     # Spielport
+    environment:
+      USERNAME: ""               # FS-Account (für Download/Lizenz)
+      PASSWORD: ""
+      GAME_PARAMS: ""
+      UID: "99"
+      GID: "100"
+    volumes:
+      - "%%path%%:/serverdata"   # savegames, mods, dedicated_server config
+      - "sgi_backup:/backup"     # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Farming Simulator 25
+      - sgi.backup.path=/serverdata

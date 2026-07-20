@@ -1,0 +1,32 @@
+#SGI = true
+#Name = Factorio — Dedicated
+#Game = Factorio
+#Version = stable
+#Description = Factory-building dedicated server (game UDP + RCON)
+#Icon = ⚙️
+#Tags = building, automation, coop
+
+# Two %%port%% placeholders, each gets its own free host port:
+#   1) game port  (UDP 34197) — first published port = player address.
+#   2) RCON       (TCP 27015)
+services:
+  factorio:
+    image: factoriotools/factorio:stable
+    stdin_open: true            # SGI console attaches to stdin
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:34197/udp"    # game
+      - "%%port%%:27015"        # RCON
+    environment:
+      SAVE_NAME: "sgi"
+      GENERATE_NEW_SAVE: "true"
+      LOAD_LATEST_SAVE: "true"
+      RCON_PORT: "27015"
+    volumes:
+      - "%%path%%:/factorio"     # saves, mods, config, RCON password
+      - "sgi_backup:/backup"     # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Factorio
+      - sgi.backup.path=/factorio

@@ -1,0 +1,37 @@
+# ------------------------------------------------------------------------
+# SGI-Creator template metadata (leading "#Key = Value" comment block).
+# "#SGI = true" marks this file as an SGI template — without it the file is
+# ignored by the API and never shown in the picker.
+# ------------------------------------------------------------------------
+#SGI = true
+#Name = Minecraft Java — Paper
+#Game = Minecraft
+#Version = 1.21.11
+#Description = High-performance Spigot fork with plugin support
+#Icon = 🧱
+#Tags = plugins, spigot, java
+
+# Placeholders filled in by SGI-Creator at create time:
+#   %%port%%       a free host port (found via Docker)
+#   %%path%%       the per-server host data path  <SGIC_VOLUME_ROOT>/<token>
+#   %%sgi.token%%  a fresh unique server token    (######-####-####)
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    stdin_open: true          # SGI console attaches to stdin
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:25565"
+    environment:
+      EULA: "TRUE"
+      TYPE: "PAPER"
+      VERSION: "1.21.11"
+      MEMORY: "2G"
+    volumes:
+      - "%%path%%:/data"
+      - "sgi_backup:/backup"   # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Minecraft Paper
+      - sgi.backup.path=/data

@@ -1,0 +1,38 @@
+#SGI = true
+#Name = 7 Days to Die — Dedicated
+#Game = 7 Days to Die
+#Version = latest
+#Description = Zombie survival dedicated server (game + web dashboard)
+#Icon = 🧟
+#Tags = survival, zombies, coop, steam
+
+# Three %%port%% placeholders, each gets its own free host port:
+#   1) game port     (UDP 26900) — first published port = player address.
+#   2) web dashboard  (TCP 8080)
+#   3) telnet         (TCP 8081)
+# ⚠️ Vanilla 7DtD nutzt auch 26900/TCP sowie 26901-26902/UDP. Da %%port%% pro
+# Vorkommen eine ANDERE Nummer vergibt (und der Client 26901 = gameport+1
+# erwartet), wird hier nur der primäre UDP-Port automatisch belegt. Wenn du die
+# feste Portfolge brauchst, trage stattdessen feste Ports hart ein.
+services:
+  sdtd:
+    image: vinanrra/7dtd-server:latest
+    stdin_open: true            # SGI console attaches to stdin
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:26900/udp"    # game
+      - "%%port%%:8080"         # web dashboard
+      - "%%port%%:8081"         # telnet
+    environment:
+      START_MODE: "1"
+      TimeZone: "Europe/Berlin"
+      TEST_ALERT: "NO"
+    volumes:
+      - "%%path%%/serverfiles:/home/sdtdserver/serverfiles"   # game server files
+      - "%%path%%/data:/home/sdtdserver/.local"               # saves + config
+      - "sgi_backup:/backup"                                  # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=7 Days to Die
+      - sgi.backup.path=/home/sdtdserver/.local

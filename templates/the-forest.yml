@@ -1,0 +1,37 @@
+#SGI = true
+#Name = The Forest — Dedicated
+#Game = The Forest
+#Version = latest
+#Description = Survival horror dedicated server (game + query, läuft via Wine)
+#Icon = 🌲
+#Tags = survival, horror, coop, steam, wine
+
+# Three %%port%% placeholders, each gets its own free host port:
+#   1) game port    (UDP 27015) — first published port = player address.
+#   2) query port   (UDP 27016)
+#   3) steam port   (UDP 8766)
+services:
+  theforest:
+    image: ich777/theforest:latest
+    stdin_open: true
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:27015/udp"    # game
+      - "%%port%%:27016/udp"    # query
+      - "%%port%%:8766/udp"     # steam
+    environment:
+      SERVER_NAME: "SGI The Forest"
+      MAX_PLAYERS: "8"
+      PASSWORD: ""
+      ADMIN_PASSWORD: "changeme-admin"
+      VALIDATE: "false"
+      UID: "99"
+      GID: "100"
+    volumes:
+      - "%%path%%:/serverdata/serverfiles"   # game files + saves
+      - "sgi_backup:/backup"                 # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=The Forest
+      - sgi.backup.path=/serverdata/serverfiles

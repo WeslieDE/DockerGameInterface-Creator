@@ -1,0 +1,36 @@
+#SGI = true
+#Name = ARK: Survival Evolved — Dedicated
+#Game = ARK
+#Version = latest
+#Description = Dinosaur survival dedicated server (game + Steam query port)
+#Icon = 🦖
+#Tags = survival, dinos, steam, pvp
+
+# Multiple %%port%% placeholders — each gets its own independent free host port:
+#   1) game port   (UDP 7777)
+#   2) query port  (UDP 27015, Steam server browser)
+# RCON stays on a fixed internal port; expose it too if you manage ARK remotely.
+services:
+  ark:
+    image: hermsi/ark-server:latest
+    stdin_open: true            # SGI console attaches to stdin
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:7777/udp"     # game
+      - "%%port%%:27015/udp"    # Steam query
+    environment:
+      SESSION_NAME: "SGI ARK Server"
+      SERVER_MAP: "TheIsland"
+      SERVER_PASSWORD: ""
+      ADMIN_PASSWORD: "changeme-admin"
+      MAX_PLAYERS: "20"
+      UPDATE_ON_START: "true"
+      BACKUP_ON_STOP: "true"
+    volumes:
+      - "%%path%%:/app"          # persistent world + configs
+      - "sgi_backup:/backup"     # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=ARK Survival Evolved
+      - sgi.backup.path=/app

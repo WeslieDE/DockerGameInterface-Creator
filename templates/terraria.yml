@@ -1,0 +1,31 @@
+#SGI = true
+#Name = Terraria — Dedicated (TShock)
+#Game = Terraria
+#Version = latest
+#Description = 2D sandbox dedicated server with TShock (game TCP + REST API)
+#Icon = 🌳
+#Tags = sandbox, 2d, coop, tshock
+
+# Two %%port%% placeholders, each gets its own free host port:
+#   1) game port  (TCP 7777) — first published port = player address.
+#   2) REST API   (TCP 7878, TShock)
+# Hinweis: Terraria ist TCP-only, daher kein TCP/UDP-Fallstrick.
+services:
+  terraria:
+    image: ryshe/terraria:latest
+    stdin_open: true            # SGI console attaches to stdin
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:7777"         # game
+      - "%%port%%:7878"         # TShock REST API
+    environment:
+      WORLD_FILENAME: "sgi.wld"
+      TSHOCK: "1"
+    volumes:
+      - "%%path%%:/config"       # worlds, TShock config, plugins
+      - "sgi_backup:/backup"     # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Terraria
+      - sgi.backup.path=/config

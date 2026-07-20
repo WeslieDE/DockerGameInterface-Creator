@@ -1,0 +1,37 @@
+#SGI = true
+#Name = Garry's Mod — Dedicated
+#Game = Garry's Mod
+#Version = latest
+#Description = Source-engine sandbox dedicated server
+#Icon = 🔧
+#Tags = sandbox, source, steam, coop
+
+# One %%port%% placeholder for the game/query port (UDP 27015) — this is the
+# address players connect to.
+# ⚠️ Source-Server nutzen 27015 zusätzlich auf TCP. Da gleicher Portname auf
+# TCP+UDP mit %%port%% nicht geht (jedes Vorkommen bekommt eine andere Nummer),
+# wird hier nur UDP automatisch belegt. Wird TCP zwingend gebraucht, feste,
+# gleiche Portnummer für tcp+udp hart eintragen.
+services:
+  gmod:
+    image: ich777/gmodserver:latest
+    stdin_open: true
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:27015/udp"    # game + Steam query
+    environment:
+      GAME_ID: "4000"
+      GAME_PARAMS: "+gamemode sandbox +map gm_construct +maxplayers 16"
+      SERVER_NAME: "SGI Garry's Mod"
+      RCON_PASSWORD: "changeme-rcon"
+      VALIDATE: "false"
+      UID: "99"
+      GID: "100"
+    volumes:
+      - "%%path%%:/serverdata/serverfiles"   # game files, addons, saves, cfg
+      - "sgi_backup:/backup"                 # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Garry's Mod
+      - sgi.backup.path=/serverdata/serverfiles

@@ -1,0 +1,36 @@
+#SGI = true
+#Name = Satisfactory — Dedicated
+#Game = Satisfactory
+#Version = latest
+#Description = Factory-building dedicated server (game UDP)
+#Icon = 🏭
+#Tags = building, automation, coop, steam
+
+# One %%port%% placeholder for the game port (UDP 7777) — this is the address
+# players connect to.
+# ⚠️ Satisfactory (1.0+) nutzt 7777 sowohl auf UDP als auch TCP. Gleicher
+# Portname auf TCP+UDP geht mit %%port%% nicht (jedes Vorkommen = andere
+# Nummer), daher wird hier nur UDP automatisch belegt. Braucht dein Setup TCP
+# zwingend, eine feste, identische Portnummer für tcp+udp hart eintragen.
+services:
+  satisfactory:
+    image: wolveix/satisfactory-server:latest
+    stdin_open: true
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:7777/udp"     # game
+    environment:
+      MAXPLAYERS: "8"
+      STEAMBETA: "false"
+      AUTOSAVEINTERVAL: "300"
+      AUTOSAVENUM: "5"
+      PGID: "1000"
+      PUID: "1000"
+    volumes:
+      - "%%path%%:/config"       # saves, blueprints, server settings
+      - "sgi_backup:/backup"     # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Satisfactory
+      - sgi.backup.path=/config

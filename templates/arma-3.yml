@@ -1,0 +1,39 @@
+#SGI = true
+#Name = Arma 3 — Dedicated
+#Game = Arma 3
+#Version = latest
+#Description = Military sim dedicated server (game + Steam query port)
+#Icon = 🪖
+#Tags = milsim, tactical, coop, steam
+
+# Two %%port%% placeholders, each gets its own free host port:
+#   1) game port   (UDP 2302) — first published port = player address.
+#   2) query port  (UDP 2303, Steam)
+# ⚠️ Arma belegt normalerweise 2302-2306/UDP fortlaufend (2303=query,
+# 2304=steamport, ...). %%port%% vergibt pro Vorkommen eine andere Nummer und
+# hält diese Reihenfolge NICHT ein — für strikt fortlaufende Ports feste Ports
+# eintragen.
+services:
+  arma3:
+    image: homme/arma3server:latest
+    stdin_open: true
+    tty: false
+    restart: unless-stopped
+    ports:
+      - "%%port%%:2302/udp"     # game
+      - "%%port%%:2303/udp"     # Steam query
+    environment:
+      ARMA_HOST: "0.0.0.0"
+      ARMA_PORT: "2302"
+      ARMA_WORLD: "Altis"
+      ARMA_ADMIN_PASSWORD: "changeme-admin"
+      ARMA_LIMITFPS: "100"
+      HEADLESS_CLIENTS: "0"
+      STEAM_BRANCH: "public"
+    volumes:
+      - "%%path%%:/arma3"        # mods, missions, server config
+      - "sgi_backup:/backup"     # shared SGI backup volume
+    labels:
+      - sgi.token=%%sgi.token%%
+      - sgi.name=Arma 3
+      - sgi.backup.path=/arma3
